@@ -18,10 +18,9 @@ function list(){
     for(var i=0; i<response.length; i++){
       console.log(response[i]);
     }
-  }) 
+    prompt();
+  });
 }
-
-list();
 
 function prompt(){
   inquirer.prompt([{
@@ -34,18 +33,21 @@ function prompt(){
       message: 'How many?',
       name: 'purchaseQuantity'
     }]).then(function(response){
-      // var purchaseQuery = 'SELECT StockQuantity, Price FROM Products WHERE ProductID =' + response.itemNum;
-      connection.query('SELECT StockQuantity, Price FROM Products WHERE ProductID = ?', [response.itemNum], function(err, res){
-        for(var i=0; i<res.length; i++){
-          console.log(res[i].ProductName + " | " + res[i].Price);
-        }
-      })
-    }) 
-  })
+      var getProductsQuery = 'SELECT StockQuantity, Price FROM Products WHERE ProductID = ?';
+      connection.query(getProductsQuery, [response.itemNum], function(err, res){
+          if(res.StockQuantity > response.purchaseQuantity) {
+            console.log("Not enough stock quantity");
+          } else {
+            var amountOwed = 'SELECT '
+            console.log(res.Price * response.purchaseQuantity);
+          }
+      });
+    });
+  });
 }
 
 prompt();
-list();
+// list();
 
 
 
