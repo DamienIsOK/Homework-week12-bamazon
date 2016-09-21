@@ -1,3 +1,4 @@
+// ** QUESTION AT THE BOTTOM OF THIS PAGE
 var mysql = require('mysql');
 var connection = mysql.createConnection({
 	host: "localhost",
@@ -49,7 +50,6 @@ connection.query(
 	}
 )
 
-
 connection.query(
 	'INSERT INTO Products SET ?', {
 		ProductName: "Dishwasher Liquid",
@@ -67,3 +67,48 @@ connection.query(
 		StockQuantity: 40
 	}
 )
+
+connection.query(
+	'INSERT INTO Products SET ?', {
+		ProductName: "Onitsuka Tiger shoes",
+		DepartmentName: "Clothing",
+		Price: 65,
+		StockQuantity: 100
+	}
+)
+
+connection.query(
+	'INSERT INTO Products SET ?', {
+		ProductName: "A Monster Calls novel",
+		DepartmentName: "Books",
+		Price: 2,
+		StockQuantity: 15
+	}
+)
+
+connection.query(
+	'INSERT INTO Products SET ?', {
+		ProductName: "Pajama pants",
+		DepartmentName: "Clothing",
+		Price: 1,
+		StockQuantity: 20
+	}
+)
+
+connection.query(
+	'INSERT INTO Products SET ?', {
+		ProductName: "Pancake mix",
+		DepartmentName: "Food",
+		Price: 500,
+		StockQuantity: 7
+	}
+
+)
+
+// ** QUESTION: EACH TIME I RUN AN UPDATE QUERY, MY PRICE IS SET TO 9.99 -- EVEN IF I HAVE ALL OTHER CODE COMMENTED OUT. WHY?
+connection.query(
+	'UPDATE Products SET ? WHERE ?', [{
+	Price: 75
+}, {
+	ProductID: 25
+	}]);
