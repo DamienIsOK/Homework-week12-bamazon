@@ -1,22 +1,84 @@
+var inquirer = require('inquirer');
 var mysql = require('mysql');
+var table = require('ascii-table');
 var connection = mysql.createConnection({
-	host: "localhost",
-	port: 3306,
-	user: "root",
-	password: "",
-	database: "Bamazon"
-	})
+    host: "localhost",
+    port: 3306,
+    user: "root", //Your username
+    password: "", //Your password
+    database: "Bamazon",
+})
 
 connection.connect(function(err) {
-	if(err) throw err;
-	console.log("connected as ID: " + connection.threadId);
-	})
+    if (err) {console.log(err)};
+});
 
-connection.query(
-	'SELECT * FROM Products', function(err, res) {
-		for(var i=0; i<res.length; i++) {
-			console.log(
-				res[i].ProductID + " | " + "Product" + " | " + res[i].ProductName + " | "+ "Department" + " | " + res[i].DepartmentName + " | "+ "Price" + " | " + res[i].Price + " | " + "Stock" + " | " + res[i].StockQuantity);
-		}
+function list(){
+  connection.query('SELECT * FROM Products ORDER BY ProductID', function(err, response){
+    for(var i=0; i<response.length; i++){
+      console.log(response[i]);
+    }
+  }) 
+}
 
-	})
+list();
+
+function prompt(){
+  inquirer.prompt([{
+    type:'input',
+    message: 'Which item would you like to purchase?',
+    name: 'itemNumber'
+  }]).then(function(response){
+    inquirer.prompt([{
+      type: 'input',
+      message: 'How many?',
+      name: 'purchaseQuantity'
+    }]).then(function(response){
+      // var purchaseQuery = 'SELECT StockQuantity, Price FROM Products WHERE ProductID =' + response.itemNum;
+      connection.query('SELECT StockQuantity, Price FROM Products WHERE ProductID = ?', [response.itemNum], function(err, res){
+        for(var i=0; i<res.length; i++){
+          console.log(res[i].ProductName + " | " + res[i].Price);
+        }
+      })
+    }) 
+  })
+}
+
+prompt();
+list();
+
+
+
+// function purchase(){
+//   inquirer.prompt([{
+//     type: 'input',
+//     message: 'Which item would you like to purchase?',
+//     name: 'itemNum'
+//   }]).then(function(response){
+//     inquirer.prompt([{
+//       type: 'input',
+//       message: 'How many?',
+//       name: 'StockQuantity'
+//     }]).then(function(res){
+//       var query = "SELECT StockQuantity, price FROM Products WHERE ProductID=" + response.itemNum; 
+//       connection.query(query, function(er, row){
+//         if (er) {console.log(er)};
+//         if (row[0].StockQuantity < res.StockQuantity) {
+//           console.log("Insufficient quantity in stock!");
+//         } else {
+//           // This means updating the SQL database to reflect the remaining quantity.
+//           query = "UPDATE Products SET StockQuantity = " + (row[0].StockQuantity - res.StockQuantity) + " WHERE ProductID =" + response.itemNum;
+//           // console.log(query);
+//           connection.query(query, function(error1, res){
+//             if(error1){console.log(error1)}
+//           });
+
+//           // Once the update goes through, show the customer the total cost of their purchase.
+//           var totalCost = res.StockQuantity * row[0].price;
+//           console.log(" You owe me: " + totalCost);
+//           purchase();
+//         }
+//       });
+//     });
+//   });
+// }
